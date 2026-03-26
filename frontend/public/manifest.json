@@ -1,0 +1,17 @@
+{
+  "short_name": "Lead Finder",
+  "name": "Lead Finder — Lead search & WhatsApp outreach",
+  "description": "Search business leads, save contacts, manage templates, and connect WhatsApp.",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#2563eb",
+  "background_color": "#f6f7fb"
+}
