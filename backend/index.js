@@ -799,8 +799,8 @@ app.post('/api/whatsapp/logout', requireAuth, async (req, res) => {
 
 app.use(express.static(frontendBuildPath));
 
-app.get('*', async (req, res, next) => {
-  if (req.path.startsWith('/api/')) return next();
+// Express 5/path-to-regexp no longer accepts bare "*" route patterns.
+app.get(/^(?!\/api\/).*/, async (req, res) => {
   try {
     await fs.access(path.join(frontendBuildPath, 'index.html'));
     return res.sendFile(path.join(frontendBuildPath, 'index.html'));
