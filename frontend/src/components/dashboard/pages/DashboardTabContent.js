@@ -82,10 +82,10 @@ function DashboardTabContent({
 
   return (
     <div className="grid grid-cols-12 gap-[14px]">
-      <section className="bg-white border border-gray-200 rounded-2xl p-3 sm:p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <section className="bg-slate-50 border border-slate-200 rounded-2xl p-3 sm:p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-start gap-3 min-w-0">
           <div
-            className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100"
+            className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-bold bg-slate-100 text-slate-700 border border-slate-200"
             aria-hidden
           >
             WA
@@ -100,7 +100,7 @@ function DashboardTabContent({
           {!waLoading && !isWaReady && typeof onOpenWhatsAppIntegration === 'function' ? (
             <button
               type="button"
-              className="h-9 rounded-xl border border-gray-200 px-3 text-[12px] font-semibold text-gray-800 bg-white hover:bg-gray-50"
+            className="h-9 rounded-xl border border-slate-200 px-3 text-[12px] font-semibold text-gray-800 bg-slate-50 hover:bg-slate-100"
               onClick={onOpenWhatsAppIntegration}
             >
               Integrations
@@ -115,7 +115,7 @@ function DashboardTabContent({
         </div>
       ) : null}
 
-      <section className="bg-slate-50/80 border border-slate-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12 sm:col-span-6 lg:col-span-3">
+      <section className="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12 sm:col-span-6 lg:col-span-3">
         <div className="flex items-center justify-between gap-3 mb-[10px]">
           <span className="text-[13px] font-semibold text-slate-700 tracking-[0.1px]">All Leads</span>
           <span className="text-[12px] px-2.5 py-1.5 rounded-full border border-slate-200 text-slate-600 bg-white">
@@ -130,7 +130,7 @@ function DashboardTabContent({
         </div>
       </section>
 
-      <section className="bg-slate-50/80 border border-slate-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12 sm:col-span-6 lg:col-span-3">
+      <section className="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12 sm:col-span-6 lg:col-span-3">
         <div className="flex items-center justify-between gap-3 mb-[10px]">
           <span className="text-[13px] font-semibold text-slate-700 tracking-[0.1px]">Saved landline leads</span>
           <span className="text-[12px] px-2.5 py-1.5 rounded-full border border-slate-200 text-slate-600 bg-white">
@@ -145,7 +145,7 @@ function DashboardTabContent({
         </div>
       </section>
 
-      <section className="bg-slate-50/80 border border-slate-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12 sm:col-span-6 lg:col-span-3">
+      <section className="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12 sm:col-span-6 lg:col-span-3">
         <div className="flex items-center justify-between gap-3 mb-[10px]">
           <span className="text-[13px] font-semibold text-slate-700 tracking-[0.1px]">Message templates</span>
           <span className="text-[12px] px-2.5 py-1.5 rounded-full border border-slate-200 text-slate-600 bg-white">
@@ -158,7 +158,7 @@ function DashboardTabContent({
         <div className="text-slate-600 text-[12px]">Saved 3-step template sets</div>
       </section>
 
-      <section className="bg-slate-50/80 border border-slate-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12 sm:col-span-6 lg:col-span-3">
+      <section className="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12 sm:col-span-6 lg:col-span-3">
         <div className="flex items-center justify-between gap-3 mb-[10px]">
           <span className="text-[13px] font-semibold text-slate-700 tracking-[0.1px]">Campaigns</span>
           <span className="text-[12px] px-2.5 py-1.5 rounded-full border border-slate-200 text-slate-600 bg-white">
@@ -171,10 +171,10 @@ function DashboardTabContent({
         <div className="text-slate-600 text-[12px]">Created campaign records</div>
       </section>
 
-      <section className="bg-white border border-gray-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12">
+      <section className="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12">
         <div className="flex items-center justify-between gap-3 mb-[10px]">
           <strong>Lead search</strong>
-          <span className="text-[12px] px-2.5 py-1.5 rounded-full border border-gray-200 text-gray-500 bg-gray-50">
+          <span className="text-[12px] px-2.5 py-1.5 rounded-full border border-slate-200 text-gray-500 bg-slate-100">
             New query
           </span>
         </div>
@@ -187,7 +187,7 @@ function DashboardTabContent({
               onChange={(e) => setSearchPhrase(e.target.value)}
               placeholder="e.g. SaaS founders"
               required
-              className="h-[42px] rounded-xl border border-gray-200 px-3 outline-none bg-white text-[14px] focus:border-blue-600 focus:ring-4 focus:ring-blue-600/20"
+              className="h-[42px] rounded-xl border border-slate-200 px-3 outline-none bg-slate-50 text-[14px] focus:border-slate-300 focus:ring-4 focus:ring-slate-200"
             />
           </label>
 
@@ -197,7 +197,7 @@ function DashboardTabContent({
               value={countryGl}
               onChange={(e) => setCountryGl(e.target.value)}
               required
-              className="h-[42px] rounded-xl border border-gray-200 px-3 outline-none bg-white text-[14px] focus:border-blue-600 focus:ring-4 focus:ring-blue-600/20"
+              className="h-[42px] rounded-xl border border-slate-200 px-3 outline-none bg-slate-50 text-[14px] focus:border-slate-300 focus:ring-4 focus:ring-slate-200"
             >
               {countryOptions.map((c) => (
                 <option key={c.gl} value={c.gl}>
@@ -208,7 +208,7 @@ function DashboardTabContent({
           </label>
 
           <button
-            className="h-[44px] rounded-xl bg-blue-600 text-white font-bold text-[14px] px-4 whitespace-nowrap disabled:cursor-not-allowed disabled:bg-blue-300"
+            className="h-[44px] rounded-xl bg-slate-800 text-white font-bold text-[14px] px-4 whitespace-nowrap disabled:cursor-not-allowed disabled:bg-slate-400"
             type="submit"
             disabled={searchLoading}
           >
@@ -237,7 +237,7 @@ function DashboardTabContent({
         )}
       </section>
 
-      <section className="bg-white border border-gray-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12">
+      <section className="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12">
         <div className="flex items-center justify-between gap-4">
           <div>
             <div className="font-bold text-[14px] text-slate-900">Recent search results</div>
@@ -249,7 +249,7 @@ function DashboardTabContent({
           <div className="flex items-center gap-2">
             <button
               type="button"
-              className="h-9 rounded-xl border border-blue-200 px-3 text-sm text-blue-700 bg-blue-50 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="h-9 rounded-xl border border-slate-200 px-3 text-sm text-slate-700 bg-slate-100 hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={recentSearchLoading || !recentSearchItems.length || saveLeadsLoading}
               onClick={handleSaveAllLeads}
             >
@@ -257,7 +257,7 @@ function DashboardTabContent({
             </button>
             <button
               type="button"
-              className="h-9 rounded-xl border border-gray-200 px-3 text-sm text-gray-700 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="h-9 rounded-xl border border-slate-200 px-3 text-sm text-gray-700 bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={recentSearchLoading || recentSearchPageIdx <= 0}
               onClick={() => setRecentSearchPageIdx((v) => Math.max(0, v - 1))}
             >
@@ -265,7 +265,7 @@ function DashboardTabContent({
             </button>
             <button
               type="button"
-              className="h-9 rounded-xl border border-gray-200 px-3 text-sm text-gray-700 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="h-9 rounded-xl border border-slate-200 px-3 text-sm text-gray-700 bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={recentSearchLoading || recentSearchItems.length === 0 || recentSearchPageIdx >= recentSearchItems.length - 1}
               onClick={() => setRecentSearchPageIdx((v) => Math.min(recentSearchItems.length - 1, v + 1))}
             >
@@ -303,8 +303,8 @@ function DashboardTabContent({
 
             {placesPreview.length ? (
               <div className="mt-[12px] overflow-x-auto">
-                <table className="min-w-full text-left border border-gray-200 rounded-xl overflow-hidden">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full text-left border border-slate-200 rounded-xl overflow-hidden">
+                  <thead className="bg-slate-100">
                     <tr>
                       <th className="px-4 py-3 text-[12px] font-semibold text-gray-700 border-b border-gray-200">Business name</th>
                       <th className="px-4 py-3 text-[12px] font-semibold text-gray-700 border-b border-gray-200">Contact number</th>

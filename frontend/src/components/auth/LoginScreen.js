@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import AppFooter from '../common/AppFooter';
-
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5656';
+import { API_BASE_URL } from '../../config/api';
 
 function LoginScreen({ onLogin }) {
   const [username, setUsername] = useState('');

@@ -34,12 +34,15 @@ function getAuthPath() {
 
 function resolveChromeExecutablePath() {
   const fromEnv = process.env.CHROME_EXECUTABLE_PATH;
+  const localAppData = process.env.LOCALAPPDATA;
   const candidates = [
     fromEnv,
     'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
     'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
     'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
     'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+    localAppData ? path.join(localAppData, 'Google', 'Chrome', 'Application', 'chrome.exe') : null,
+    localAppData ? path.join(localAppData, 'Microsoft', 'Edge', 'Application', 'msedge.exe') : null,
   ].filter(Boolean);
 
   for (const candidate of candidates) {
@@ -59,19 +62,18 @@ async function initWhatsAppClient() {
   lastError = null;
 
   const executablePath = resolveChromeExecutablePath();
-  if (!executablePath) {
-    initializing = false;
-    lastError = 'No local Chrome/Edge executable found. Set CHROME_EXECUTABLE_PATH in backend/.env.';
-    throw new Error(lastError);
+  const puppeteerConfig = {
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  };
+  if (executablePath) {
+    puppeteerConfig.executablePath = executablePath;
   }
 
   const newClient = new Client({
     authStrategy: new LocalAuth(),
-    puppeteer: {
-      headless: true,
-      executablePath,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    },
+    // If no local browser is found, allow Puppeteer to use its bundled Chromium.
+    puppeteer: puppeteerConfig,
   });
 
   newClient.on('qr', async (qr) => {

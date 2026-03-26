@@ -172,14 +172,14 @@ function LeadsTabContent({ leadsLoading, leadsError, leadItems, onImportCustomLe
   }
 
   return (
-    <section className="bg-white border border-gray-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12">
+    <section className="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
         <div className="font-bold text-[14px] text-slate-900">Saved leads</div>
-        <div className="flex rounded-xl border border-gray-200 p-0.5 bg-gray-50">
+        <div className="flex rounded-xl border border-slate-200 p-0.5 bg-slate-100">
           <button
             type="button"
             className={`h-9 px-4 rounded-lg text-sm font-semibold transition-colors ${
-              leadTab === 'hand' ? 'bg-white text-blue-700 shadow-sm border border-gray-100' : 'text-gray-600 hover:text-gray-900'
+              leadTab === 'hand' ? 'bg-slate-50 text-slate-900 shadow-sm border border-slate-200' : 'text-gray-600 hover:text-gray-900'
             }`}
             onClick={() => setLeadTab('hand')}
           >
@@ -189,7 +189,7 @@ function LeadsTabContent({ leadsLoading, leadsError, leadItems, onImportCustomLe
           <button
             type="button"
             className={`h-9 px-4 rounded-lg text-sm font-semibold transition-colors ${
-              leadTab === 'land' ? 'bg-white text-blue-700 shadow-sm border border-gray-100' : 'text-gray-600 hover:text-gray-900'
+              leadTab === 'land' ? 'bg-slate-50 text-slate-900 shadow-sm border border-slate-200' : 'text-gray-600 hover:text-gray-900'
             }`}
             onClick={() => setLeadTab('land')}
           >
@@ -199,29 +199,29 @@ function LeadsTabContent({ leadsLoading, leadsError, leadItems, onImportCustomLe
         </div>
       </div>
 
-      <div className="mb-4 p-3 rounded-xl border border-gray-200 bg-gray-50">
+      <div className="mb-4 p-3 rounded-xl border border-slate-200 bg-slate-100">
         <div className="text-[12px] font-semibold text-gray-800">Import leads from CSV</div>
         <div className="mt-1 text-[12px] text-gray-600">Only two columns are accepted: contactName, contactNumber</div>
         <div className="mt-2 flex flex-wrap items-center gap-2">
-          <label className="h-9 px-3 inline-flex items-center rounded-xl border border-gray-200 bg-white text-[13px] text-gray-800 cursor-pointer hover:bg-gray-100">
+          <label className="h-9 px-3 inline-flex items-center rounded-xl border border-slate-200 bg-slate-50 text-[13px] text-gray-800 cursor-pointer hover:bg-slate-100">
             <input type="file" accept=".csv,text/csv" className="hidden" onChange={onCsvPicked} disabled={importLoading} />
             {importLoading ? 'Importing...' : 'Upload CSV'}
           </label>
           <button
             type="button"
-            className="h-9 px-3 rounded-xl border border-gray-200 bg-white text-[13px] text-gray-800 hover:bg-gray-100"
+            className="h-9 px-3 rounded-xl border border-slate-200 bg-slate-50 text-[13px] text-gray-800 hover:bg-slate-100"
             onClick={downloadSampleCsv}
           >
             Download sample CSV
           </button>
         </div>
-        <pre className="mt-2 text-[11px] text-gray-700 bg-white border border-gray-200 rounded-lg p-2 overflow-x-auto">{SAMPLE_CSV_CONTENT.trim()}</pre>
+        <pre className="mt-2 text-[11px] text-gray-700 bg-slate-50 border border-slate-200 rounded-lg p-2 overflow-x-auto">{SAMPLE_CSV_CONTENT.trim()}</pre>
         {importMessage ? <div className="mt-2 text-[12px] text-emerald-700">{importMessage}</div> : null}
         {importError ? <div className="mt-2 text-[12px] text-red-700">{importError}</div> : null}
       </div>
 
       {!leadsLoading && !leadsError && leadItems.length > 0 ? (
-        <div className="mt-4 pt-4 border-t border-gray-100">
+        <div className="mt-4 pt-4 border-t border-slate-200">
           <div className="text-[12px] font-semibold text-gray-700 mb-2">Filters</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <label className="flex flex-col gap-1.5 text-[12px] text-gray-600">
@@ -231,7 +231,7 @@ function LeadsTabContent({ leadsLoading, leadsError, leadItems, onImportCustomLe
                 value={filterBusiness}
                 onChange={(e) => setFilterBusiness(e.target.value)}
                 placeholder="Contains…"
-                className="h-10 rounded-xl border border-gray-200 px-3 outline-none text-[13px] bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/20"
+                className="h-10 rounded-xl border border-slate-200 px-3 outline-none text-[13px] bg-slate-50 focus:border-slate-300 focus:ring-4 focus:ring-slate-200"
               />
             </label>
             <label className="flex flex-col gap-1.5 text-[12px] text-gray-600">
@@ -240,7 +240,7 @@ function LeadsTabContent({ leadsLoading, leadsError, leadItems, onImportCustomLe
                 type="date"
                 value={filterDate}
                 onChange={(e) => setFilterDate(e.target.value)}
-                className="h-10 rounded-xl border border-gray-200 px-3 outline-none text-[13px] bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/20"
+                className="h-10 rounded-xl border border-slate-200 px-3 outline-none text-[13px] bg-slate-50 focus:border-slate-300 focus:ring-4 focus:ring-slate-200"
               />
             </label>
             <label className="flex flex-col gap-1.5 text-[12px] text-gray-600">
@@ -250,7 +250,7 @@ function LeadsTabContent({ leadsLoading, leadsError, leadItems, onImportCustomLe
                 value={filterSearchPhrase}
                 onChange={(e) => setFilterSearchPhrase(e.target.value)}
                 placeholder="Contains…"
-                className="h-10 rounded-xl border border-gray-200 px-3 outline-none text-[13px] bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/20"
+                className="h-10 rounded-xl border border-slate-200 px-3 outline-none text-[13px] bg-slate-50 focus:border-slate-300 focus:ring-4 focus:ring-slate-200"
               />
             </label>
             <label className="flex flex-col gap-1.5 text-[12px] text-gray-600">
@@ -260,14 +260,14 @@ function LeadsTabContent({ leadsLoading, leadsError, leadItems, onImportCustomLe
                 value={filterContact}
                 onChange={(e) => setFilterContact(e.target.value)}
                 placeholder="Contains…"
-                className="h-10 rounded-xl border border-gray-200 px-3 outline-none text-[13px] bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/20"
+                className="h-10 rounded-xl border border-slate-200 px-3 outline-none text-[13px] bg-slate-50 focus:border-slate-300 focus:ring-4 focus:ring-slate-200"
               />
             </label>
           </div>
           {(filterBusiness || filterDate || filterSearchPhrase || filterContact) ? (
             <button
               type="button"
-              className="mt-3 text-[12px] text-blue-700 font-semibold hover:underline"
+              className="mt-3 text-[12px] text-slate-700 font-semibold hover:underline"
               onClick={() => {
                 setFilterBusiness('');
                 setFilterDate('');
@@ -294,7 +294,7 @@ function LeadsTabContent({ leadsLoading, leadsError, leadItems, onImportCustomLe
         <div className="flex items-center gap-2">
           <button
             type="button"
-            className="h-9 rounded-xl border border-gray-200 px-3 text-sm text-gray-700 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-9 rounded-xl border border-slate-200 px-3 text-sm text-gray-700 bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={leadsLoading || pageIdx <= 0}
             onClick={() => setPageIdx((v) => Math.max(0, v - 1))}
           >
@@ -302,7 +302,7 @@ function LeadsTabContent({ leadsLoading, leadsError, leadItems, onImportCustomLe
           </button>
           <button
             type="button"
-            className="h-9 rounded-xl border border-gray-200 px-3 text-sm text-gray-700 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-9 rounded-xl border border-slate-200 px-3 text-sm text-gray-700 bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={leadsLoading || total === 0 || pageIdx >= totalPages - 1}
             onClick={() => setPageIdx((v) => Math.min(totalPages - 1, v + 1))}
           >
@@ -327,8 +327,8 @@ function LeadsTabContent({ leadsLoading, leadsError, leadItems, onImportCustomLe
         <div className="mt-[12px] text-[13px] text-gray-500">No leads match your filters.</div>
       ) : (
         <div className="mt-[12px] overflow-x-auto">
-          <table className="min-w-full text-left border border-gray-200 rounded-xl overflow-hidden">
-            <thead className="bg-gray-50">
+          <table className="min-w-full text-left border border-slate-200 rounded-xl overflow-hidden">
+            <thead className="bg-slate-100">
               <tr>
                 <th className="px-4 py-3 text-[12px] font-semibold text-gray-700 border-b border-gray-200">Business name</th>
                 <th className="px-4 py-3 text-[12px] font-semibold text-gray-700 border-b border-gray-200">Created</th>

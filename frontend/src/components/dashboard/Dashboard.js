@@ -11,8 +11,7 @@ import SettingsTabContent from './pages/SettingsTabContent';
 import CampaignsTabContent from './pages/CampaignsTabContent';
 import DefaultTabContent from './pages/DefaultTabContent';
 import { classifyLeadContact } from '../../utils/lkPhone';
-
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5656';
+import { API_BASE_URL } from '../../config/api';
 
 function cloneDefaultMessageTemplateForm() {
   return {
@@ -826,10 +825,10 @@ function Dashboard({ onLogout }) {
   const content = useMemo(() => pageContentMap[activeId] || pageContentMap.dashboard, [activeId]);
 
   return (
-    <div className="h-screen flex bg-[#f6f7fb] text-slate-900">
+    <div className="h-screen flex bg-slate-100 text-slate-900">
       <Sidebar sections={sections} activeId={activeId} onSelect={setActiveId} onLogout={onLogout} />
       <div className="flex-1 flex flex-col min-w-0">
-        <TopBar title={active.label} subtitle="Minimal UI dashboard" onLogout={onLogout} />
+        <TopBar title={active.label} onLogout={onLogout} />
         <main className="flex-1 overflow-auto p-[22px] pb-[28px]">
           <div className="max-w-[1180px] mx-auto">
             {activeId === 'messages' ? (

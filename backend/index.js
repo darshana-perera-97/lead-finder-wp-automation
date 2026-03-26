@@ -40,6 +40,7 @@ const recentSearchPath = path.join(__dirname, 'data', 'recentSearch.json');
 const leadsPath = path.join(__dirname, 'data', 'leads.json');
 const legacyLeadsPath = path.join(__dirname, 'data', 'leads.son');
 const campaignsPath = path.join(__dirname, 'data', 'campaigns.json');
+const frontendBuildPath = path.join(__dirname, '..', 'frontend', 'build');
 
 function contactDedupeKeyFromContactString(contactStr) {
   const wa = firstLkMobileWhatsAppChatId(contactStr);
@@ -793,6 +794,18 @@ app.post('/api/whatsapp/logout', requireAuth, async (req, res) => {
   } catch (err) {
     const message = err?.message || 'Failed to logout WhatsApp';
     return res.status(500).json({ ok: false, message });
+  }
+});
+
+app.use(express.static(frontendBuildPath));
+
+app.get('*', async (req, res, next) => {
+  if (req.path.startsWith('/api/')) return next();
+  try {
+    await fs.access(path.join(frontendBuildPath, 'index.html'));
+    return res.sendFile(path.join(frontendBuildPath, 'index.html'));
+  } catch {
+    return res.status(404).send('Frontend build not found. Run "npm run build" in the frontend folder.');
   }
 });
 

@@ -3,7 +3,7 @@ import React from 'react';
 function IntegrationsTabContent({ waLoading, waError, waSession, handleWhatsAppLogout }) {
   return (
     <div className="grid grid-cols-12 gap-[14px]">
-      <section className="bg-white border border-gray-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12">
+      <section className="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12">
         <div className="flex items-start justify-between gap-4 mb-[10px]">
           <div>
             <div className="font-bold text-[16px] text-slate-900">WhatsApp Integration</div>
@@ -34,7 +34,7 @@ function IntegrationsTabContent({ waLoading, waError, waSession, handleWhatsAppL
           </div>
         ) : waSession.connected ? (
           <div className="mt-[14px] space-y-3">
-            <div className="flex items-center justify-between gap-3 p-3 rounded-xl border border-gray-200">
+            <div className="flex items-center justify-between gap-3 p-3 rounded-xl border border-slate-200 bg-slate-100">
               <div className="text-[13px] font-semibold text-gray-800">Account</div>
               <span className="text-[12px] px-2.5 py-1.5 rounded-full border border-green-200 text-green-700 bg-green-50">
                 Connected
@@ -63,7 +63,7 @@ function IntegrationsTabContent({ waLoading, waError, waSession, handleWhatsAppL
                 <img
                   src={waSession.qrImage}
                   alt="WhatsApp QR code"
-                  className="w-[220px] h-[220px] rounded-2xl border border-gray-200 bg-white"
+                  className="w-[220px] h-[220px] rounded-2xl border border-slate-200 bg-slate-50"
                 />
                 <div className="text-[13px] text-gray-600">
                   Open WhatsApp, then Settings, Linked Devices, and Link a Device.

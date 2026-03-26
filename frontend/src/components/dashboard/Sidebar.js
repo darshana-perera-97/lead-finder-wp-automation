@@ -2,9 +2,9 @@ import React from 'react';
 
 function Sidebar({ sections, activeId, onSelect, onLogout }) {
   return (
-    <aside className="w-[236px] bg-white text-slate-900 px-3 py-4 flex flex-col gap-3 border-r border-gray-200">
+    <aside className="w-[236px] bg-slate-50 text-slate-900 px-3 py-4 flex flex-col gap-3 border-r border-slate-200">
       <div className="flex items-center gap-2 px-2 py-2 rounded-xl">
-        <div className="w-[34px] h-[34px] rounded-xl bg-gradient-to-br from-blue-50 to-green-50 border border-blue-100 text-slate-900 grid place-items-center" aria-hidden="true">
+        <div className="w-[34px] h-[34px] rounded-xl bg-slate-100 border border-slate-200 text-slate-900 grid place-items-center" aria-hidden="true">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <path
               d="M6 12.5C6 8.35786 9.35786 5 13.5 5H20V11.5C20 15.6421 16.6421 19 12.5 19H6V12.5Z"
@@ -22,7 +22,7 @@ function Sidebar({ sections, activeId, onSelect, onLogout }) {
         <div className="font-bold tracking-[0.2px]">Lead Finder</div>
       </div>
 
-      <div className="h-px w-full bg-gray-200 mx-1 mt-0.5" aria-hidden="true" />
+      <div className="h-px w-full bg-slate-200 mx-1 mt-0.5" aria-hidden="true" />
 
       <ul className="list-none m-0 p-0 flex flex-col gap-1.5">
         {sections.map((s) => {
@@ -34,10 +34,10 @@ function Sidebar({ sections, activeId, onSelect, onLogout }) {
                 className={[
                   'w-full flex items-center gap-3 px-2.5 py-2.5 rounded-xl border-l-4 border-transparent text-left cursor-pointer',
                   'text-slate-600 bg-transparent',
-                  'hover:bg-gray-100 hover:text-slate-900',
-                  'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/25 focus-visible:bg-blue-50 focus-visible:border-blue-300',
+                  'hover:bg-slate-100 hover:text-slate-900',
+                  'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-300 focus-visible:bg-slate-100 focus-visible:border-slate-300',
                   active
-                    ? 'bg-blue-100/60 text-blue-700 border-l-blue-600 ring-1 ring-blue-200'
+                    ? 'bg-slate-100 text-slate-900 border-l-slate-500 ring-1 ring-slate-200'
                     : '',
                 ].join(' ')}
                 onClick={() => onSelect(s.id)}
@@ -67,9 +67,9 @@ function Sidebar({ sections, activeId, onSelect, onLogout }) {
           type="button"
           className={[
             'w-full flex items-center gap-3 px-2.5 py-2.5 rounded-xl border-l-3 border-transparent text-left cursor-pointer',
-            'text-red-600 bg-transparent',
-            'hover:bg-red-50 hover:text-red-700',
-            'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-500/20 focus-visible:border-red-300',
+            'text-slate-600 bg-transparent',
+            'hover:bg-slate-100 hover:text-slate-900',
+            'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-300 focus-visible:border-slate-300',
           ].join(' ')}
           onClick={() => {
             if (typeof onLogout === 'function') onLogout();

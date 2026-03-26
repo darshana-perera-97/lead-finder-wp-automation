@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { formatSriLankaDateTime } from '../../../utils/sriLankaTime';
-
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5656';
+import { API_BASE_URL } from '../../../config/api';
 
 function statusBadgeClass(status) {
-  if (status === 'live') return 'border-green-200 text-green-800 bg-green-50';
-  if (status === 'paused') return 'border-amber-200 text-amber-800 bg-amber-50';
-  if (status === 'completed') return 'border-emerald-200 text-emerald-900 bg-emerald-50';
+  if (status === 'live') return 'border-slate-300 text-slate-800 bg-slate-100';
+  if (status === 'paused') return 'border-slate-300 text-slate-700 bg-slate-100';
+  if (status === 'completed') return 'border-slate-300 text-slate-900 bg-slate-200';
   return 'border-slate-200 text-slate-600 bg-slate-50';
 }
 
@@ -80,6 +79,7 @@ function authHeaders() {
 
 function CampaignsTabContent() {
   const [campaigns, setCampaigns] = useState([]);
+  const [templatesById, setTemplatesById] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [updatingId, setUpdatingId] = useState(null);
@@ -102,17 +102,25 @@ function CampaignsTabContent() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`${API_BASE_URL}/api/campaigns`, {
-        headers: {
-          Accept: 'application/json',
-          ...authHeaders(),
-        },
-      });
+      const [campaignsRes, templatesRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/campaigns`, {
+          headers: {
+            Accept: 'application/json',
+            ...authHeaders(),
+          },
+        }),
+        fetch(`${API_BASE_URL}/api/message-templates`, {
+          headers: {
+            Accept: 'application/json',
+            ...authHeaders(),
+          },
+        }),
+      ]);
 
-      if (!res.ok) {
+      if (!campaignsRes.ok) {
         let msg = 'Failed to load campaigns';
         try {
-          const data = await res.json();
+          const data = await campaignsRes.json();
           if (data?.message) msg = data.message;
         } catch {
           // ignore
@@ -120,8 +128,16 @@ function CampaignsTabContent() {
         throw new Error(msg);
       }
 
-      const data = await res.json();
-      setCampaigns(Array.isArray(data?.items) ? data.items : []);
+      const campaignsData = await campaignsRes.json();
+      const templatesData = templatesRes.ok ? await templatesRes.json().catch(() => ({})) : {};
+      const templates = Array.isArray(templatesData?.items) ? templatesData.items : [];
+      const templateMap = templates.reduce((acc, t) => {
+        acc[String(t?.id)] = t;
+        return acc;
+      }, {});
+
+      setTemplatesById(templateMap);
+      setCampaigns(Array.isArray(campaignsData?.items) ? campaignsData.items : []);
     } catch (err) {
       setError(err?.message || 'Failed to load campaigns');
     } finally {
@@ -326,123 +342,146 @@ function CampaignsTabContent() {
 
   return (
     <div className="grid grid-cols-12 gap-[14px]">
-      <div className="col-span-12 flex flex-wrap items-center justify-end gap-2">
-        <button
-          type="button"
-          className="h-10 rounded-xl bg-blue-600 text-white font-bold text-sm px-4 hover:bg-blue-700"
-          onClick={openCreateModal}
-        >
-          Create Campaign
-        </button>
-      </div>
-
-      {error ? (
-        <div className="col-span-12 p-3 rounded-xl border border-red-200 bg-red-50 text-red-800 text-[13px]" role="alert">
-          {error}
-        </div>
-      ) : null}
-
-      {loading ? (
-        <div className="col-span-12 text-[13px] text-gray-500">Loading campaigns...</div>
-      ) : campaigns.length === 0 ? (
-        <div className="col-span-12 text-[13px] text-gray-500">
-          No saved campaigns yet. Use Create Campaign to add one.
-        </div>
-      ) : (
-        campaigns.map((c) => (
-          <div
-            key={c.id}
-            role="button"
-            tabIndex={0}
-            onClick={() => setSelected(c)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setSelected(c);
-              }
-            }}
-            className="col-span-12 sm:col-span-6 lg:col-span-4 text-left bg-white border border-gray-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] hover:border-blue-200 hover:shadow-md transition-all focus:outline-none focus:ring-4 focus:ring-blue-600/20 cursor-pointer"
-          >
-            <div className="flex items-start justify-between gap-3 mb-2">
-              <div className="font-bold text-[15px] text-slate-900 leading-snug pr-2">{c.name || 'Untitled campaign'}</div>
-              <span
-                className={`shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full border ${statusBadgeClass(c.status)}`}
-              >
-                {statusLabel(c.status)}
-              </span>
-            </div>
-            {c.messageTemplateName ? (
-              <div className="text-[12px] text-gray-600 mb-1">
-                Message: <span className="font-medium text-gray-800">{c.messageTemplateName}</span>
-              </div>
-            ) : null}
-            {Array.isArray(c.searchPhrases) && c.searchPhrases.length ? (
-              <div className="text-[11px] text-gray-500 line-clamp-2 mb-2">Phrases: {c.searchPhrases.join(', ')}</div>
-            ) : null}
-            <div className="flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
-              <button
-                type="button"
-                className="h-9 rounded-xl border border-gray-200 px-3 text-sm text-gray-800 bg-white hover:bg-gray-50 disabled:opacity-50"
-                disabled={updatingId === c.id || deletingId === c.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openEditModal(c);
-                }}
-              >
-                Edit
-              </button>
-              <button
-                type="button"
-                className="h-9 rounded-xl border border-red-200 px-3 text-sm text-red-800 bg-red-50 hover:bg-red-100 disabled:opacity-50"
-                disabled={updatingId === c.id || deletingId === c.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteCampaign(c.id);
-                }}
-              >
-                {deletingId === c.id ? 'Deleting…' : 'Delete'}
-              </button>
-              {c.status === 'completed' ? null : c.status === 'live' ? (
-                <button
-                  type="button"
-                  className="h-9 rounded-xl border border-amber-200 px-3 text-sm text-amber-800 bg-amber-50 hover:bg-amber-100 disabled:opacity-50"
-                  disabled={updatingId === c.id}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    patchStatus(c.id, 'paused');
-                  }}
-                >
-                  Pause
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="h-9 rounded-xl border border-green-200 px-3 text-sm text-green-800 bg-green-50 hover:bg-green-100 disabled:opacity-50"
-                  disabled={updatingId === c.id}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    patchStatus(c.id, 'live');
-                  }}
-                >
-                  Continue
-                </button>
-              )}
-            </div>
-            <div className="mt-3 text-[11px] text-gray-400">Click card for analytics</div>
+      <section className="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] min-w-0 col-span-12">
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <div>
+            <div className="font-bold text-[16px] text-slate-900">Saved Campaigns</div>
+            <div className="text-[12px] text-gray-500 mt-1">Manage campaign flows and linked message packages.</div>
           </div>
-        ))
-      )}
+          <button
+            type="button"
+            className="h-9 rounded-xl bg-slate-800 text-white text-sm font-semibold px-3 hover:bg-slate-700"
+            onClick={openCreateModal}
+          >
+            Create Campaign
+          </button>
+        </div>
+
+        {error ? (
+          <div className="mt-2 p-3 rounded-xl border border-slate-200 bg-slate-100 text-slate-800 text-[13px]" role="alert">
+            {error}
+          </div>
+        ) : null}
+
+        {loading ? (
+          <div className="text-[13px] text-gray-500 mt-3">Loading campaigns...</div>
+        ) : campaigns.length === 0 ? (
+          <div className="text-[13px] text-gray-500 mt-3">No saved campaigns yet. Use Create Campaign to add one.</div>
+        ) : (
+          <div className="grid grid-cols-12 gap-3 mt-3">
+            {campaigns.map((c) => (
+              <div
+                key={c.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelected(c)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelected(c);
+                  }
+                }}
+                className="col-span-12 md:col-span-6 xl:col-span-4 text-left rounded-2xl border border-slate-200 p-4 bg-slate-50 hover:border-slate-300 hover:shadow-md transition-all focus:outline-none focus:ring-4 focus:ring-slate-200 cursor-pointer"
+              >
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <div className="font-bold text-[15px] text-slate-900 leading-snug pr-2">{c.name || 'Untitled campaign'}</div>
+                  <span
+                    className={`shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full border ${statusBadgeClass(c.status)}`}
+                  >
+                    {statusLabel(c.status)}
+                  </span>
+                </div>
+                {c.messageTemplateName ? (
+                  <div className="text-[12px] text-gray-600 mb-1">
+                    Message: <span className="font-medium text-gray-800">{c.messageTemplateName}</span>
+                  </div>
+                ) : null}
+                {Array.isArray(c.searchPhrases) && c.searchPhrases.length ? (
+                  <div className="text-[11px] text-gray-500 line-clamp-2 mb-2">Phrases: {c.searchPhrases.join(', ')}</div>
+                ) : null}
+                <div className="flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    type="button"
+                    className="h-9 rounded-xl border border-slate-200 px-3 text-sm text-gray-800 bg-slate-50 hover:bg-slate-100 disabled:opacity-50"
+                    disabled={updatingId === c.id || deletingId === c.id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openEditModal(c);
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    className="h-9 rounded-xl border border-slate-200 px-3 text-sm text-slate-700 bg-slate-50 hover:bg-slate-100 disabled:opacity-50"
+                    disabled={updatingId === c.id || deletingId === c.id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteCampaign(c.id);
+                    }}
+                  >
+                    {deletingId === c.id ? 'Deleting…' : 'Delete'}
+                  </button>
+                  {c.status === 'completed' ? null : c.status === 'live' ? (
+                    <button
+                      type="button"
+                      className="h-9 rounded-xl border border-slate-200 px-3 text-sm text-slate-700 bg-slate-50 hover:bg-slate-100 disabled:opacity-50"
+                      disabled={updatingId === c.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        patchStatus(c.id, 'paused');
+                      }}
+                    >
+                      Pause
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="h-9 rounded-xl border border-slate-200 px-3 text-sm text-slate-700 bg-slate-50 hover:bg-slate-100 disabled:opacity-50"
+                      disabled={updatingId === c.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        patchStatus(c.id, 'live');
+                      }}
+                    >
+                      Continue
+                    </button>
+                  )}
+                </div>
+                {(() => {
+                  const linkedTemplate = templatesById[String(c?.messageTemplateId)];
+                  const msgs = Array.isArray(linkedTemplate?.messages) ? linkedTemplate.messages.slice(0, 3) : [];
+                  if (!msgs.length) return null;
+                  return (
+                    <div className="mt-3 space-y-2">
+                      {msgs.map((m, i) => (
+                        <div key={`${c.id}-msg-${i}`} className="rounded-xl border border-slate-200 bg-slate-100 p-2.5">
+                          <div className="text-[11px] text-gray-500">Message {i + 1}</div>
+                          <div className="text-[12px] text-slate-800 mt-1 line-clamp-3">{m?.text || 'No text'}</div>
+                          {m?.media ? <div className="text-[11px] text-slate-700 mt-1 truncate">Media attached</div> : null}
+                          {i > 0 ? <div className="text-[11px] text-gray-500 mt-1">Interval: {m?.interval || '00:00'}</div> : null}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+                <div className="mt-3 text-[11px] text-gray-400">Click card for analytics</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       {createOpen ? (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40"
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/30"
           role="dialog"
           aria-modal="true"
           aria-labelledby="create-campaign-title"
           onClick={() => !createLoading && closeCampaignModal()}
         >
           <div
-            className="bg-white rounded-2xl border border-gray-200 shadow-xl max-w-lg w-full max-h-[90vh] overflow-auto p-5"
+            className="bg-slate-50 rounded-2xl border border-slate-200 shadow-xl max-w-lg w-full max-h-[90vh] overflow-auto p-5"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-3 mb-4">
@@ -451,7 +490,7 @@ function CampaignsTabContent() {
               </h2>
               <button
                 type="button"
-                className="h-9 w-9 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 shrink-0 disabled:opacity-50"
+                className="h-9 w-9 rounded-xl border border-slate-200 text-gray-600 hover:bg-slate-100 shrink-0 disabled:opacity-50"
                 disabled={createLoading}
                 onClick={closeCampaignModal}
                 aria-label="Close"
@@ -468,7 +507,7 @@ function CampaignsTabContent() {
                   onChange={(e) => setCampaignName(e.target.value)}
                   required
                   placeholder="e.g. March salon outreach"
-                  className="h-11 rounded-xl border border-gray-200 px-3 outline-none text-[14px] focus:border-blue-600 focus:ring-4 focus:ring-blue-600/20"
+                  className="h-11 rounded-xl border border-slate-200 px-3 outline-none text-[14px] bg-slate-50 focus:border-slate-300 focus:ring-4 focus:ring-slate-200"
                 />
               </label>
 
@@ -477,15 +516,15 @@ function CampaignsTabContent() {
                 {modalLeadsLoading ? (
                   <div className="text-[13px] text-gray-500">Loading phrases...</div>
                 ) : phraseOptions.length === 0 ? (
-                  <div className="text-[13px] text-amber-800 bg-amber-50 border border-amber-200 rounded-xl p-3">
+                  <div className="text-[13px] text-slate-700 bg-slate-100 border border-slate-200 rounded-xl p-3">
                     No search phrases found. Save leads from the Dashboard (Lead search) first.
                   </div>
                 ) : (
-                  <div className="max-h-[180px] overflow-y-auto rounded-xl border border-gray-200 p-2 space-y-1">
+                  <div className="max-h-[180px] overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-2 space-y-1">
                     {phraseOptions.map((p) => (
                       <label
                         key={p}
-                        className="flex items-start gap-2 text-[13px] text-gray-800 cursor-pointer rounded-lg px-2 py-1.5 hover:bg-gray-50"
+                        className="flex items-start gap-2 text-[13px] text-gray-800 cursor-pointer rounded-lg px-2 py-1.5 hover:bg-slate-100"
                       >
                         <input
                           type="checkbox"
@@ -508,7 +547,7 @@ function CampaignsTabContent() {
                   onChange={(e) => setTemplateId(e.target.value)}
                   required
                   disabled={modalTemplatesLoading}
-                  className="h-11 rounded-xl border border-gray-200 px-3 outline-none text-[14px] bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/20 disabled:opacity-60"
+                  className="h-11 rounded-xl border border-slate-200 px-3 outline-none text-[14px] bg-slate-50 focus:border-slate-300 focus:ring-4 focus:ring-slate-200 disabled:opacity-60"
                 >
                   <option value="">Select a template…</option>
                   {messageTemplates.map((t) => (
@@ -520,12 +559,12 @@ function CampaignsTabContent() {
                 {modalTemplatesLoading ? (
                   <span className="text-[12px] text-gray-500">Loading templates…</span>
                 ) : messageTemplates.length === 0 ? (
-                  <span className="text-[12px] text-amber-700">Add templates on the Messages page first.</span>
+                  <span className="text-[12px] text-slate-600">Add templates on the Messages page first.</span>
                 ) : null}
               </label>
 
               {createError ? (
-                <div className="p-3 rounded-xl border border-red-200 bg-red-50 text-red-800 text-[13px]" role="alert">
+                <div className="p-3 rounded-xl border border-slate-200 bg-slate-100 text-slate-800 text-[13px]" role="alert">
                   {createError}
                 </div>
               ) : null}
@@ -533,7 +572,7 @@ function CampaignsTabContent() {
               <div className="flex flex-wrap gap-2 justify-end pt-2">
                 <button
                   type="button"
-                  className="h-10 rounded-xl border border-gray-200 px-4 text-sm text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                  className="h-10 rounded-xl border border-slate-200 px-4 text-sm text-gray-700 bg-slate-50 hover:bg-slate-100 disabled:opacity-50"
                   disabled={createLoading}
                   onClick={closeCampaignModal}
                 >
@@ -541,7 +580,7 @@ function CampaignsTabContent() {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 rounded-xl bg-blue-600 text-white font-bold text-sm px-4 disabled:opacity-50"
+                  className="h-10 rounded-xl bg-slate-800 text-white font-bold text-sm px-4 disabled:opacity-50"
                   disabled={createLoading || selectedPhrases.length === 0 || !templateId || phraseOptions.length === 0}
                 >
                   {createLoading
@@ -560,14 +599,14 @@ function CampaignsTabContent() {
 
       {selected ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30"
           role="dialog"
           aria-modal="true"
           aria-labelledby="campaign-analytics-title"
           onClick={() => setSelected(null)}
         >
           <div
-            className="bg-white rounded-2xl border border-gray-200 shadow-xl max-w-xl w-full max-h-[90vh] overflow-auto p-5"
+            className="bg-slate-50 rounded-2xl border border-slate-200 shadow-xl max-w-xl w-full max-h-[90vh] overflow-auto p-5"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-3 mb-4">
@@ -579,7 +618,7 @@ function CampaignsTabContent() {
               </div>
               <button
                 type="button"
-                className="h-9 w-9 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 shrink-0"
+                className="h-9 w-9 rounded-xl border border-slate-200 text-gray-600 hover:bg-slate-100 shrink-0"
                 onClick={() => setSelected(null)}
                 aria-label="Close"
               >
@@ -597,7 +636,7 @@ function CampaignsTabContent() {
               const badgeStatus = showCompleted ? 'completed' : selected.status;
 
               return (
-                <div className="mb-4 rounded-xl border border-gray-100 bg-gray-50/80 px-3 py-2.5">
+                <div className="mb-4 rounded-xl border border-slate-200 bg-slate-100 px-3 py-2.5">
                   <div className="text-[11px] text-gray-500 uppercase tracking-wide mb-1">Campaign state</div>
                   <span
                     className={`inline-flex text-[12px] font-semibold px-2.5 py-1 rounded-full border ${statusBadgeClass(badgeStatus)}`}
@@ -639,11 +678,11 @@ function CampaignsTabContent() {
 
                     return (
                       <dl className="mt-3 grid grid-cols-2 gap-2 text-[12px]">
-                        <div className="border border-gray-100/80 rounded-lg px-2.5 py-2 bg-white/60">
+                        <div className="border border-slate-200 rounded-lg px-2.5 py-2 bg-slate-50">
                           <dt className="text-[10px] text-gray-500 uppercase tracking-wide">Sequence</dt>
                           <dd className="m-0 mt-0.5 font-semibold text-slate-900 leading-snug">{stepLine}</dd>
                         </div>
-                        <div className="border border-gray-100/80 rounded-lg px-2.5 py-2 bg-white/60">
+                        <div className="border border-slate-200 rounded-lg px-2.5 py-2 bg-slate-50">
                           <dt className="text-[10px] text-gray-500 uppercase tracking-wide">Contacts completed</dt>
                           <dd className="m-0 mt-0.5 font-semibold text-slate-900 tabular-nums">
                             {prog.completedCount} / {prog.totalContacts}
@@ -670,7 +709,7 @@ function CampaignsTabContent() {
             ) : null}
 
             {selected.lastSendError ? (
-              <div className="mb-4 p-3 rounded-xl border border-red-200 bg-red-50 text-red-800 text-[13px]" role="alert">
+              <div className="mb-4 p-3 rounded-xl border border-slate-200 bg-slate-100 text-slate-800 text-[13px]" role="alert">
                 <strong className="font-semibold">Last send error:</strong> {selected.lastSendError}
               </div>
             ) : null}
@@ -687,7 +726,7 @@ function CampaignsTabContent() {
                 ]
                   .filter(([, v]) => v != null && v !== '')
                   .map(([label, value]) => (
-                    <div key={label} className="border border-gray-100 rounded-xl px-3 py-2 bg-gray-50/80">
+                    <div key={label} className="border border-slate-200 rounded-xl px-3 py-2 bg-slate-100">
                       <dt className="text-[11px] text-gray-500 uppercase tracking-wide">{label}</dt>
                       <dd className="m-0 mt-1 font-semibold text-gray-900">{value}</dd>
                     </div>
@@ -697,7 +736,7 @@ function CampaignsTabContent() {
               <p className="text-[13px] text-gray-500">No analytics stored for this campaign.</p>
             )}
 
-            <div className="mt-5 pt-4 border-t border-gray-100 text-[12px] text-gray-500">
+            <div className="mt-5 pt-4 border-t border-slate-200 text-[12px] text-gray-500">
               Created: {selected.createdAt ? formatSriLankaDateTime(selected.createdAt) : 'N/A'}
             </div>
           </div>
