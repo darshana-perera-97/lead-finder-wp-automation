@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Lead Finder">
+  <defs>
+    <linearGradient id="lf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="url(#lf)"/>
+  <path fill="#ffffff" fill-rule="evenodd" d="M14 7a6 6 0 104.243 10.243l3.765 3.765a1.2 1.2 0 001.697-1.697l-3.765-3.765A6 6 0 0014 7zm0 2.4a3.6 3.6 0 110 7.2 3.6 3.6 0 010-7.2z"/>
+</svg>
